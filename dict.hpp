@@ -2,9 +2,9 @@
 #define CLASS_T_DICT_H
 /*+--------------------------- *
  *|                           |*
- *|  File : library.hpp       |*
+ *|  File : dict.hpp          |*
  *|                           |*
- *|  Data : 05/12/2011        |*
+ *|  Data : 05/11/2013        |*
  *|  TYPE : Class Header      |*
  *|                           |*
  * --------------------------- */
@@ -84,7 +84,7 @@ public:
 
     iterator( ){};
   public:
-    iterator(const list<string>::iterator& i,map<string,T>& v):itr_(i),val_(v){}
+    iterator(const vector<string>::iterator& i,map<string,T>& v):itr_(i),val_(v){}
     iterator(const iterator& i):itr_(i.itr_),val_(i.val_){}
 
     T& operator*(){ return ( val_.at(*itr_) ); }
