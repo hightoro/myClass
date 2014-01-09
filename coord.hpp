@@ -30,13 +30,13 @@ public:
    *|  Construct & Destruct  |*
    * ------------------------ */
   basic_coord():                                  // Construct (Default)
-    dim(2),x(0),y(0){}
+    dim(2),x(0),y(0),z(0),w(0),v(0){}
   basic_coord(T x_,T y_):
-    dim(2),x(x_),y(y_){}                    // 2
+    dim(2),x(x_),y(y_),z(0),w(0),v(0){}     // 2
   basic_coord(T x_,T y_,T z_):
-    dim(3),x(x_),y(y_),z(z_){}              // 3
+    dim(3),x(x_),y(y_),z(z_),w(0),v(0){}    // 3
   basic_coord(T x_,T y_,T z_,T w_):
-    dim(4),x(x_),y(y_),z(z_),w(w_){}        // 4
+    dim(4),x(x_),y(y_),z(z_),w(w_),v(0){}   // 4
   basic_coord(T x_,T y_,T z_,T w_,T v_):
     dim(5),x(x_),y(y_),z(z_),w(w_),v(v_){}  // 5
   virtual ~basic_coord()=default;                 // Destruct
