@@ -7,7 +7,15 @@
 #ifndef NAME_ORIGINAL_FUNCTION_H
 #define NAME_ORIGINAL_FUNCTION_H
 
-#include
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <map>
+
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/xpressive/xpressive.hpp>
 
 namespace pporig
 {
@@ -20,11 +28,11 @@ namespace pporig
   struct console
   {
     template<typename T>
-    static void error_print(T t){   return cout << error   << t << endl; }
+    static void error_print(T t){   return std::cout << ERROR   << t << std::endl; }
     template<typename T>
-    static void warning_print(T t){ return cout << warning << t << endl; }
+    static void warning_print(T t){ return std::cout << WARN << t << std::endl; }
     template<typename T>
-    static void info_print(T t){    return cout << info    << t << endl; }
+    static void info_print(T t){    return std::cout << INFO    << t << std::endl; }
 
     static constexpr char* ERROR  = (char*)"\x1b[1;4;31m [ERROR]  : \x1b[0m: ";
     static constexpr char* WARN   = (char*)    "\x1b[34m [WARNING]: \x1b[0m: ";
@@ -32,14 +40,18 @@ namespace pporig
     static constexpr char* WS     = (char*)"           ";
   };
 
+
+  //////////////////////////////////////////////////////////////////////////////////
+  // file
+
   /* -------- *
    *|  open  |*
    * -------- */
   template<typename T>
-  T& open( T& file, const std::string& f_name )
+  T& open( T& file, const std::string& name )
   {
     // file open
-    file.open(f_name);
+    file.open(name);
 
     // open check ( throw exception )
     if( !file.is_open() ){
@@ -48,7 +60,9 @@ namespace pporig
     }
 
     // infomation
-    std::cout << console::info <<  "Open File [ " << name << " ] OK!" << endl;
+    std::cout << console::INFO <<  "Open File [ " << name << " ] OK!" << std::endl;
+
+    return file;
   }
 
 
@@ -62,7 +76,7 @@ namespace pporig
   //template <template<class Type, class... Args> class Container = std::vector>
   //Container<T> split( T const& line, T const& demilita )
   template<typename T=std::vector<std::string>>
-  T split( std::string const& line )
+  T split( std::string const& line, std::string const& demilita )
   {
     T array;
 
@@ -73,8 +87,8 @@ namespace pporig
 
     return std::move(array);
   }
-  template<typename T=std::vector>
-  T<std::string> split( std::string const& line )
+  template<typename T=std::vector<std::string>>
+  T split( std::string const& line )
   { return std::move( split(line," \t\n") ); }
 
 
@@ -85,9 +99,9 @@ namespace pporig
    *|  pop_front  |*
    * ------------- */
   template <template<class Type, class... Args> class Container,typename T>
-  U pop_front( T<U>& array )
+  T pop_front( Container<T>& array )
   {
-    string front = array.front();
+    auto front = array.front();
     array.erase( array.begin() );
     return std::move(front);
   }
@@ -100,11 +114,18 @@ namespace pporig
     return for_each(rcontainer.begin(), rcontainer.end(), function);
   }
 
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // regex
+
   /* --------------------------- *
    *|  regex (boost/xpressive)  |*
    * --------------------------- */
   using namespace boost::xpressive;
   inline sregex regex(std::string const& s){ return std::move(sregex::compile(s)); };
 
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
 
 #endif // NAME_ORIGINAL_FUNCTION_H
