@@ -1,5 +1,4 @@
-/*|=====================================
- *|  Copyright (c) 2011-2014 hightoro
+/*|===================================== *|  Copyright (c) 2011-2014 hightoro
  *|  All rights reserved
  *|=====================================
  */
@@ -7,7 +6,7 @@
 #ifndef CLASS_T_COORD_H
 #define CLASS_T_COORD_H
 
-#include <vector>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 
@@ -21,8 +20,43 @@
  *|                                |*
  *+--------------------------------+*/
 
-//template <class T> class coord;
-//template <class T> ostream& operator << ( ostream&, const coord& );
+// Forward declarations(class)
+template <class T> class basic_coord;
+
+// Forward declarations(friend function)
+template <typename T>
+constexpr basic_coord<T> operator+ (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr basic_coord<T> operator- (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr basic_coord<T> operator* (const basic_coord<T>&, const T&);
+template <typename T>
+constexpr basic_coord<T> operator* (const T&, const basic_coord<T>&);
+template <typename T>
+constexpr basic_coord<T> operator/ (const basic_coord<T>&, const T&);
+//
+template <typename T>
+constexpr basic_coord<T> operator+ (const basic_coord<T>&);
+template <typename T>
+constexpr basic_coord<T> operator- (const basic_coord<T>&);
+//
+template <typename T>
+constexpr T comp (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr bool operator<  (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr bool operator>  (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr bool operator<= (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr bool operator>= (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr bool operator== (const basic_coord<T>&, const basic_coord<T>&);
+template <typename T>
+constexpr bool operator!= (const basic_coord<T>&, const basic_coord<T>&);
+//
+template <typename T,typename charT,typename traits>
+std::basic_ostream<charT,traits>& operator<< (std::basic_ostream<charT,traits>&, const basic_coord<T>&);
 
 // 五次元まで
 template <class T>
@@ -32,28 +66,24 @@ private:
   unsigned short dim;
 
 public:
-  T x;
-  T y;
-  T z;
-  T w;
-  T v;
+  T const x, y, z, w, v;  // read-only menber
 
   /* ------------------------ *
    *|  Construct & Destruct  |*
    * ------------------------ */
-  basic_coord():                            // Construct (Default)
+  constexpr basic_coord():                  // Construct (Default)
     dim(2),x(0),y(0),z(0),w(0),v(0){}
 
-  basic_coord(T x_,T y_):
+  constexpr basic_coord(T x_,T y_):
     dim(2),x(x_),y(y_),z(0),w(0),v(0){}     // 2
 
-  basic_coord(T x_,T y_,T z_):
+  constexpr basic_coord(T x_,T y_,T z_):
     dim(3),x(x_),y(y_),z(z_),w(0),v(0){}    // 3
 
-  basic_coord(T x_,T y_,T z_,T w_):
+  constexpr basic_coord(T x_,T y_,T z_,T w_):
     dim(4),x(x_),y(y_),z(z_),w(w_),v(0){}   // 4
 
-  basic_coord(T x_,T y_,T z_,T w_,T v_):
+  constexpr basic_coord(T x_,T y_,T z_,T w_,T v_):
     dim(5),x(x_),y(y_),z(z_),w(w_),v(v_){}  // 5
 
   ~basic_coord()=default;                   // Destruct
@@ -61,8 +91,8 @@ public:
   /* ------------------ *
    *|  Copy Construct  |*
    * ------------------ */
-  basic_coord( const basic_coord<T>& )=default;              // Copy Construct 1
-  basic_coord& operator=( const basic_coord<T>& )=default;   // Copy Construct 2
+  basic_coord( const basic_coord<T>& )=default;            // Copy Construct 1
+  basic_coord& operator=( const basic_coord<T>& )=default; // Copy Construct 2
 
   /* ------------------ *
    *|  Move Construct  |*
@@ -73,96 +103,172 @@ public:
   /* ------- *
    *|  put  |*
    * ------- */
+  // nothing //
+
+  /* ------- *
+   *|  get  |*
+   * ------- */
+  // nothing //
 
   /* ---------------------- *
-   *|  get (return value)  |*
+   *|  operator(compound)  |*
    * ---------------------- */
-
-  /* ------------------- *
-   *|  at (return ref)  |*
-   * ------------------- */
-
-  /* ------------------ *
-   *|  operator(cast)  |*
-   * ------------------ */
-
-
-  /* --------------------- *
-   *|  operator(compare)  |*
-   * --------------------- */
-  int  comp( const basic_coord<T>& obj )const
+  basic_coord<T>& operator+= ( const basic_coord<T>& obj )
   {
-    if( (v-obj.v)!=0 )
-      return (v-obj.v);
-    else if( (w-obj.w)!=0 )
-      return (w-obj.w);
-    else if( (z-obj.z)!=0 )
-      return (z-obj.z);
-    else if( (y-obj.y)!=0 )
-      return (y-obj.y);
-    else
-      return (x-obj.x);
+    const_cast<T&>(x)+= obj.x;
+    const_cast<T&>(y)+= obj.y;
+    const_cast<T&>(z)+= obj.z;
+    const_cast<T&>(w)+= obj.w;
+    const_cast<T&>(v)+= obj.v;
+    return *this;
   }
-  bool operator <  ( const basic_coord<T>& obj )const
-  { return ( (this->comp(obj)) < 0 ); }
-  bool operator >  ( const basic_coord<T>& obj )const
-  { return ( (this->comp(obj)) > 0 ); }
-  bool operator <= ( const basic_coord<T>& obj )const
-  { return ( (this->comp(obj)) <= 0 ); }
-  bool operator >= ( const basic_coord<T>& obj )const
-  { return ( (this->comp(obj)) >= 0 ); }
-  bool operator == ( const basic_coord<T>& obj )const
-  { return ( (this->comp(obj)) == 0 ); }
-  bool operator != ( const basic_coord<T>& obj )const
-  { return ( (this->comp(obj)) != 0 ); }
-
-  /* ----------------------- *
-   *|  operator(increment)  |*
-   * ----------------------- */
-  //basic_coord<T>& operator ++ (  );
-  //basic_coord<T>  operator ++ ( int );
-  //basic_coord<T>& operator -- (  );
-  //basic_coord<T>  operator -- ( int );
-
-  /* --------------------- *
-   *|  operator(monadic)  |*
-   * --------------------- */
-  basic_coord<T>& operator += ( const basic_coord<T>& );
-  basic_coord<T>& operator -= ( const basic_coord<T>& );
+  basic_coord<T>& operator-= ( const basic_coord<T>& obj )
+  {
+    const_cast<T&>(x)-= obj.x;
+    const_cast<T&>(y)-= obj.y;
+    const_cast<T&>(z)-= obj.z;
+    const_cast<T&>(w)-= obj.w;
+    const_cast<T&>(v)-= obj.v;
+    return *this;
+  }
   //basic_coord<T>& operator *= ( const basic_coord<T>& );
-  basic_coord<T>& operator *= ( T );
+  basic_coord<T>& operator*= ( const T& val )
+  {
+    const_cast<T&>(x)*= val;
+    const_cast<T&>(y)*= val;
+    const_cast<T&>(z)*= val;
+    const_cast<T&>(w)*= val;
+    const_cast<T&>(v)*= val;
+    return *this;
+  }
   //basic_coord<T>& operator /= ( const basic_coord<T>& );
-  basic_coord<T>& operator /= ( T& );
+  basic_coord<T>& operator/= ( const T& val)
+  {
+    const_cast<T&>(x)/= val;
+    const_cast<T&>(y)/= val;
+    const_cast<T&>(z)/= val;
+    const_cast<T&>(w)/= val;
+    const_cast<T&>(v)/= val;
+    return *this;
+  }
 
   /* -------------------- *
    *|  operator(binary)  |*
    * -------------------- */
-  const basic_coord<T> operator + ( const basic_coord<T>& )const;
-  const basic_coord<T> operator - ( const basic_coord<T>& )const;
-  const basic_coord<T> operator * ( const basic_coord<T>& )const;
-  const basic_coord<T> operator / ( const basic_coord<T>& )const;
-
-  /* -------------------- *
-   *|  operator(global)  |*
-   * -------------------- */
-  friend std::ostream& operator << ( ostream& out, const basic_coord<T>& obj )
-  {
-    if( obj.dim == 1 )
-      out << boost::format("(%d)")%obj.x;
-    else if( obj.dim == 2 )
-      out << boost::format("(%d,%d)")%obj.x %obj.y;
-    else if( obj.dim == 3 )
-      out << boost::format("(%d,%d,%d)")%obj.x %obj.y %obj.z;
-    return out; 
-  }
-  //friend istream& operator >> <>( istream&, Basic_Coord<T>& );
+  friend constexpr basic_coord<T> operator+ <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr basic_coord<T> operator- <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr basic_coord<T> operator* <T>(const basic_coord<T>&, const T&);
+  friend constexpr basic_coord<T> operator* <T>(const T&, const basic_coord<T>&);
+  friend constexpr basic_coord<T> operator/ <T>(const basic_coord<T>&, const T&);
+  /* ------------------- *
+   *|  operator(unary)  |*
+   * ------------------- */
+  friend constexpr basic_coord<T> operator+ <T>(const basic_coord<T>&);
+  friend constexpr basic_coord<T> operator- <T>(const basic_coord<T>&);
+  /* --------------------- *
+   *|  operator(compare)  |*
+   * --------------------- */
+  friend constexpr T comp <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr bool operator<  <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr bool operator>  <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr bool operator<= <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr bool operator>= <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr bool operator== <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend constexpr bool operator!= <T>(const basic_coord<T>&, const basic_coord<T>&);
+/* -------------------- *
+ *|  operator(stream)  |*
+ * -------------------- */
+  template<typename U,typename charT,typename traits>
+  friend std::basic_ostream<charT,traits>& operator<< (std::basic_ostream<charT,traits>&, const basic_coord<U>&);
+  //
+private:
+  constexpr basic_coord(T x_,T y_,T z_,T w_,T v_,unsigned short d):
+    dim(d),x(x_),y(y_),z(z_),w(w_),v(v_){}  // call from friend function
 };
+/* -------------------- *
+ *|  operator(binary)  |*
+ * -------------------- */
+template<typename T>
+constexpr basic_coord<T> operator + ( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
+{ return basic_coord<T>(lhs.x+rhs.x,lhs.y+rhs.y,lhs.z+rhs.z,lhs.w+rhs.w,lhs.v+rhs.v,lhs.dim); }
+template<typename T>
+constexpr basic_coord<T> operator - ( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
+{ return basic_coord<T>(lhs.x-rhs.x,lhs.y-rhs.y,lhs.z-rhs.z,lhs.w-rhs.w,lhs.v-rhs.v,lhs.dim); }
+template<typename T>
+constexpr basic_coord<T> operator * ( const basic_coord<T>& lhs, const T& rhs )
+{ return basic_coord<T>(lhs.x*rhs,lhs.y*rhs,lhs.z*rhs,lhs.w*rhs,lhs.v*rhs,lhs.dim); }
+template<typename T>
+constexpr basic_coord<T> operator * ( const T& lhs, const basic_coord<T>& rhs )
+{ return basic_coord<T>(lhs*rhs.x,lhs*rhs.y,lhs*rhs.z,lhs*rhs.w,lhs*rhs.v,rhs.dim); }
+template<typename T>
+constexpr basic_coord<T> operator / ( const basic_coord<T>& lhs, const T& rhs )
+{ return basic_coord<T>(lhs.x/rhs,lhs.y/rhs,lhs.z/rhs,lhs.w/rhs,lhs.v/rhs,lhs.dim); }
+/* ------------------- *
+ *|  operator(unary)  |*
+ * ------------------- */
+template<typename T>
+constexpr basic_coord<T> operator + ( const basic_coord<T>& rhs )
+{ return rhs; }
+template<typename T>
+constexpr basic_coord<T> operator - ( const basic_coord<T>& rhs )
+{ return basic_coord<T>(-rhs.x,-rhs.y,-rhs.z,-rhs.w,-rhs.v,rhs.dim); }
+/* --------------------- *
+ *|  operator(compare)  |*
+ * --------------------- */
+template<typename T>
+constexpr T comp( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
+{
+  return
+    (lhs.v!=rhs.v) ? (lhs.v-rhs.v) :
+    (lhs.w!=rhs.w) ? (lhs.w-rhs.w) :
+    (lhs.z!=rhs.z) ? (lhs.z-rhs.z) :
+    (lhs.y!=rhs.y) ? (lhs.y-rhs.y) :
+                     (lhs.x-rhs.x) ;
+}
+template<typename T>
+constexpr bool operator <  ( const basic_coord<T>& lhs, const basic_coord<T>& rhs  )
+{ return ( comp(lhs,rhs) <  0 ); }
+template<typename T>
+constexpr bool operator >  ( const basic_coord<T>& lhs, const basic_coord<T>& rhs  )
+{ return ( comp(lhs,rhs) >  0 ); }
+template<typename T>
+constexpr bool operator <= ( const basic_coord<T>& lhs, const basic_coord<T>& rhs  )
+{ return ( comp(lhs,rhs) <= 0 ); }
+template<typename T>
+constexpr bool operator >= ( const basic_coord<T>& lhs, const basic_coord<T>& rhs  )
+{ return ( comp(lhs,rhs) >= 0 ); }
+template<typename T>
+constexpr bool operator == ( const basic_coord<T>& lhs, const basic_coord<T>& rhs  )
+{ return ( comp(lhs,rhs) == 0 ); }
+template<typename T>
+constexpr bool operator != ( const basic_coord<T>& lhs, const basic_coord<T>& rhs  )
+{ return ( comp(lhs,rhs) != 0 ); }
 
+/* -------------------- *
+ *|  operator(stream)  |*
+ * -------------------- */
+//istream& operator >> <>( istream&, Basic_Coord<T>& );
+template<typename T, typename charT, typename traits>
+std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& ostr, const basic_coord<T>& rhs)
+{
+  std::basic_ostream<charT,traits> str;
+  str << "(";
+  if( rhs.dim >= 1 )        str <<        rhs.x;
+  else if( rhs.dim >= 2 )   str << "," << rhs.y;
+  else if( rhs.dim >= 3 )   str << "," << rhs.z;
+  else if( rhs.dim >= 4 )   str << "," << rhs.v;
+  else if( rhs.dim >= 5 )   str << "," << rhs.w;
+  str << ")";
+  return ostr << str.str();;
+}
+
+/* -------------------- *
+ *|  operator(global)  |*
+ * -------------------- */
 using coord =basic_coord<int>;
+using fcoord=basic_coord<float>;
 using dcoord=basic_coord<double>;
 using scoord=basic_coord<short>;
 using lcoord=basic_coord<long>;
-
-#include "coord.cpp"
 
 #endif //CLASS_T_COORD_H
