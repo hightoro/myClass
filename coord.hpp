@@ -155,26 +155,26 @@ public:
   /* -------------------- *
    *|  operator(binary)  |*
    * -------------------- */
-  friend constexpr basic_coord<T> operator+ <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr basic_coord<T> operator- <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr basic_coord<T> operator* <T>(const basic_coord<T>&, const T&);
-  friend constexpr basic_coord<T> operator* <T>(const T&, const basic_coord<T>&);
-  friend constexpr basic_coord<T> operator/ <T>(const basic_coord<T>&, const T&);
+  friend /*constexpr*/ basic_coord<T> operator+<> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ basic_coord<T> operator-<T> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ basic_coord<T> operator*<T> (const basic_coord<T>&, const T&);
+  friend /*constexpr*/ basic_coord<T> operator*<T> (const T&, const basic_coord<T>&);
+  friend /*constexpr*/ basic_coord<T> operator/<T> (const basic_coord<T>&, const T&);
   /* ------------------- *
    *|  operator(unary)  |*
    * ------------------- */
-  friend constexpr basic_coord<T> operator+ <T>(const basic_coord<T>&);
-  friend constexpr basic_coord<T> operator- <T>(const basic_coord<T>&);
+  friend /*constexpr*/ basic_coord<T> operator+<T> (const basic_coord<T>&);
+  friend /*constexpr*/ basic_coord<T> operator-<T> (const basic_coord<T>&);
   /* --------------------- *
    *|  operator(compare)  |*
    * --------------------- */
-  friend constexpr T comp <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr bool operator<  <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr bool operator>  <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr bool operator<= <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr bool operator>= <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr bool operator== <T>(const basic_coord<T>&, const basic_coord<T>&);
-  friend constexpr bool operator!= <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ T comp <T>(const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ bool operator< <T> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ bool operator> <T> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ bool operator<=<T> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ bool operator>=<T> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ bool operator==<T> (const basic_coord<T>&, const basic_coord<T>&);
+  friend /*constexpr*/ bool operator!=<T> (const basic_coord<T>&, const basic_coord<T>&);
 /* -------------------- *
  *|  operator(stream)  |*
  * -------------------- */
@@ -189,28 +189,28 @@ private:
  *|  operator(binary)  |*
  * -------------------- */
 template<typename T>
-constexpr basic_coord<T> operator + ( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
+constexpr basic_coord<T> operator+ ( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
 { return basic_coord<T>(lhs.x+rhs.x,lhs.y+rhs.y,lhs.z+rhs.z,lhs.w+rhs.w,lhs.v+rhs.v,lhs.dim); }
 template<typename T>
-constexpr basic_coord<T> operator - ( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
+constexpr basic_coord<T> operator- ( const basic_coord<T>& lhs, const basic_coord<T>& rhs )
 { return basic_coord<T>(lhs.x-rhs.x,lhs.y-rhs.y,lhs.z-rhs.z,lhs.w-rhs.w,lhs.v-rhs.v,lhs.dim); }
 template<typename T>
-constexpr basic_coord<T> operator * ( const basic_coord<T>& lhs, const T& rhs )
+constexpr basic_coord<T> operator* ( const basic_coord<T>& lhs, const T& rhs )
 { return basic_coord<T>(lhs.x*rhs,lhs.y*rhs,lhs.z*rhs,lhs.w*rhs,lhs.v*rhs,lhs.dim); }
 template<typename T>
-constexpr basic_coord<T> operator * ( const T& lhs, const basic_coord<T>& rhs )
+constexpr basic_coord<T> operator* ( const T& lhs, const basic_coord<T>& rhs )
 { return basic_coord<T>(lhs*rhs.x,lhs*rhs.y,lhs*rhs.z,lhs*rhs.w,lhs*rhs.v,rhs.dim); }
 template<typename T>
-constexpr basic_coord<T> operator / ( const basic_coord<T>& lhs, const T& rhs )
+constexpr basic_coord<T> operator/ ( const basic_coord<T>& lhs, const T& rhs )
 { return basic_coord<T>(lhs.x/rhs,lhs.y/rhs,lhs.z/rhs,lhs.w/rhs,lhs.v/rhs,lhs.dim); }
 /* ------------------- *
  *|  operator(unary)  |*
  * ------------------- */
 template<typename T>
-constexpr basic_coord<T> operator + ( const basic_coord<T>& rhs )
+constexpr basic_coord<T> operator+ ( const basic_coord<T>& rhs )
 { return rhs; }
 template<typename T>
-constexpr basic_coord<T> operator - ( const basic_coord<T>& rhs )
+constexpr basic_coord<T> operator- ( const basic_coord<T>& rhs )
 { return basic_coord<T>(-rhs.x,-rhs.y,-rhs.z,-rhs.w,-rhs.v,rhs.dim); }
 /* --------------------- *
  *|  operator(compare)  |*
@@ -249,23 +249,24 @@ constexpr bool operator != ( const basic_coord<T>& lhs, const basic_coord<T>& rh
  * -------------------- */
 //istream& operator >> <>( istream&, Basic_Coord<T>& );
 template<typename T, typename charT, typename traits>
-std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& ostr, const basic_coord<T>& rhs)
+std::basic_ostream<charT,traits>& operator<< (std::basic_ostream<charT,traits>& ostr, const basic_coord<T>& rhs)
 {
-  std::basic_ostream<charT,traits> str;
+  std::basic_ostringstream<charT,traits> str;
   str << "(";
   if( rhs.dim >= 1 )        str <<        rhs.x;
-  else if( rhs.dim >= 2 )   str << "," << rhs.y;
-  else if( rhs.dim >= 3 )   str << "," << rhs.z;
-  else if( rhs.dim >= 4 )   str << "," << rhs.v;
-  else if( rhs.dim >= 5 )   str << "," << rhs.w;
+  if( rhs.dim >= 2 )   str << "," << rhs.y;
+  if( rhs.dim >= 3 )   str << "," << rhs.z;
+  if( rhs.dim >= 4 )   str << "," << rhs.v;
+  if( rhs.dim >= 5 )   str << "," << rhs.w;
   str << ")";
-  return ostr << str.str();;
+  return ostr << str.str();
 }
 
 /* -------------------- *
  *|  operator(global)  |*
  * -------------------- */
 using coord =basic_coord<int>;
+using coord =basic_coord<int>; // test
 using fcoord=basic_coord<float>;
 using dcoord=basic_coord<double>;
 using scoord=basic_coord<short>;
