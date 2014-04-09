@@ -22,5 +22,5 @@ $(TARGET):	$(OBJS)
 clean:
 		$(RM) *.o *~ $(TARGET)
 
-test.o:		dict.hpp
+test.o:		dict.hpp coord.hpp
 

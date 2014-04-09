@@ -28,45 +28,17 @@ namespace pporig
   struct console
   {
     template<typename T>
-    static void error_print(T t){   return std::cout << ERROR   << t << std::endl; }
+    static void error_print(T t){   return std::cout << ERROR << t << std::endl; }
     template<typename T>
-    static void warning_print(T t){ return std::cout << WARN << t << std::endl; }
+    static void warning_print(T t){ return std::cout << WARN 　<< t << std::endl; }
     template<typename T>
-    static void info_print(T t){    return std::cout << INFO    << t << std::endl; }
+    static void info_print(T t){    return std::cout << INFO 　<< t << std::endl; }
 
     static constexpr char* ERROR  = (char*)"\x1b[1;4;31m [ERROR]  : \x1b[0m: ";
     static constexpr char* WARN   = (char*)    "\x1b[34m [WARNING]: \x1b[0m: ";
     static constexpr char* INFO   = (char*)  "\x1b[1;33m [INFO]   : \x1b[0m: ";
     static constexpr char* WS     = (char*)"           ";
   };
-
-
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // file
-
-  /* -------- *
-   *|  open  |*
-   * -------- */
-  template<typename T>
-  T& open( T& file, const std::string& name )
-  {
-    // file open
-    file.open(name);
-
-    // open check ( throw exception )
-    if( !file.is_open() ){
-      std::string error_s("File not Found Exception -> file's name is [ "); error_s+=name; error_s+=" ]";
-      throw std::logic_error(error_s);
-    }
-
-    // infomation
-    std::cout << console::INFO <<  "Open File [ " << name << " ] OK!" << std::endl;
-
-    return file;
-  }
-
-
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // string
@@ -105,6 +77,14 @@ namespace pporig
     auto front = array.front();
     array.erase( array.begin() );
     return std::move(front);
+  }
+
+  /* ------------------ *
+   *|  range for_each  |*
+   * ------------------ */
+  template <typename T_container, typename T_function>
+  T_function for_each(T_container& rcontainer, T_function function) {
+    return for_each(rcontainer.begin(), rcontainer.end(), function);
   }
 
 
