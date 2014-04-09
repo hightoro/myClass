@@ -41,6 +41,7 @@ namespace pporig
   };
 
 
+
   //////////////////////////////////////////////////////////////////////////////////
   // file
 
@@ -104,14 +105,6 @@ namespace pporig
     auto front = array.front();
     array.erase( array.begin() );
     return std::move(front);
-  }
-
-  /* ------------------ *
-   *|  range for_each  |*
-   * ------------------ */
-  template <typename T_container, typename T_function>
-  T_function for_each(T_container& rcontainer, T_function function) {
-    return for_each(rcontainer.begin(), rcontainer.end(), function);
   }
 
 
