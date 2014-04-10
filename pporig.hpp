@@ -48,7 +48,7 @@ namespace pporig
    * --------- */
   //template <template<class Type, class... Args> class Container = std::vector>
   //Container<T> split( T const& line, T const& demilita )
-  template<typename T=std::vector<std::string>>
+  template<typename T=std::vector<std::string> >
   T split( std::string const& line, std::string const& demilita )
   {
     T array;
