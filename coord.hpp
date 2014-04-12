@@ -1,10 +1,11 @@
-/*|===================================== *|  Copyright (c) 2011-2014 hightoro
+/*|=====================================
+ *|  Copyright (c) 2011-2014 hightoro
  *|  All rights reserved
  *|=====================================
  */
 
-#ifndef CLASS_T_COORD_H
-#define CLASS_T_COORD_H
+#ifndef HIGHTORO_CPP_ORIGINAL_COORD_CLASS_H
+#define HIGHTORO_CPP_ORIGINAL_COORD_CLASS_H
 
 #include <sstream>
 #include <type_traits>
@@ -93,14 +94,22 @@ public:
   /* ------------------ *
    *|  Copy Construct  |*
    * ------------------ */
-  basic_coord( const basic_coord<T>& )=default;            // Copy Construct 1
-  basic_coord& operator=( const basic_coord<T>& )=default; // Copy Construct 2
+  basic_coord( const basic_coord& )=default;            // Copy Construct 1
+  /*constexpr*/ basic_coord& operator=( const basic_coord& obj )
+  {
+    const_cast<T&>(x)= obj.x;
+    const_cast<T&>(y)= obj.y;
+    const_cast<T&>(z)= obj.z;
+    const_cast<T&>(w)= obj.w;
+    const_cast<T&>(v)= obj.v;
+    return *this;
+  } // Copy Construct 2
 
   /* ------------------ *
    *|  Move Construct  |*
    * ------------------ */
-  basic_coord( basic_coord<T>&& )=default;              // Move Construct 1
-  basic_coord& operator=( basic_coord<T>&& )=default;   // Move Construct 2
+  basic_coord( basic_coord&& )=default;              // Move Construct 1
+  basic_coord& operator=( basic_coord&& )=default;   // Move Construct 2
 
   /* ------- *
    *|  put  |*
