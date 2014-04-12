@@ -20,6 +20,8 @@
  *|                                |*
  *+--------------------------------+*/
 
+namespace pporig{
+
 // Forward declarations(class)
 template <class T> class basic_coord;
 
@@ -271,5 +273,7 @@ using fcoord=basic_coord<float>;
 using dcoord=basic_coord<double>;
 using scoord=basic_coord<short>;
 using lcoord=basic_coord<long>;
+
+}
 
 #endif //CLASS_T_COORD_H

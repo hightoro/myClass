@@ -17,6 +17,8 @@
 
 #include "../pporig/tags.hpp"
 
+namespace pporig{
+
 /* -------- *
  *|  open  |*
  * -------- */
@@ -58,16 +60,24 @@ private:
 
 
 public:
-
+  /*+----------------------------+*
+   *|  Constructor & Destructor  |*
+   *+----------------------------+*/
   file_string()=delete;
   ~file_string()=default;
-
+  /*+--------------------+*
+   *|  Copy Constructor  |*
+   *+--------------------+*/
   file_string(const file_string&)=delete;
   file_string& operator=(const file_string&)=delete;
-
+  /*+--------------------+*
+   *|  Move Constructor  |*
+   *+--------------------+*/
   file_string(file_string&&)=default;
   file_string& operator=(file_string&&)=default;
-
+  /*+---------------------+*
+   *|  Other Constructor  |*
+   *+---------------------+*/
   file_string(const s_type& f):
     name_(f),file_("(bof)"),line_(),num_(0)
   { open(file_,f); /*get_line(file_,line_);*/  }
@@ -114,5 +124,7 @@ public:
 };
 
 using ifstring = file_string<std::basic_ifstream>;
+
+}
 
 #endif
