@@ -7,6 +7,7 @@
 #ifndef HIGHTORO_CPP_ORIGINAL_TAGS_FUNCTIONS_H
 #define HIGHTORO_CPP_ORIGINAL_TAGS_FUNCTIONS_H
 
+namespace pporig{
 /* ----------------- *
  *| escape sequence |*
  * ----------------- */
@@ -18,5 +19,6 @@ struct tags
   static constexpr char* WS     = (char*)"           ";
 };
 
+}
 #endif
 
