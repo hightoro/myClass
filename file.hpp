@@ -79,7 +79,7 @@ public:
    *|  Other Constructor  |*
    *+---------------------+*/
   file_string(const s_type& f):
-    name_(f),file_("(bof)"),line_(),num_(0)
+    name_(f),file_(),line_("(bof)"),num_(0)
   { open(file_,f); /*get_line(file_,line_);*/  }
 
   // get next line
