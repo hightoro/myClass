@@ -11,9 +11,9 @@ findはない（かわりにboolを返すexist関数がある）
 座標系のクラス
 
 ## file.hpp
-fileをSTLコンテナのように扱うfstreamラッパー
-コンストラクタ（文字列、demilita）でファイルを開く
-参照外しで文字列になるfile_iteratorを持つ
+fileをSTLコンテナのように扱うfstreamラッパー  
+コンストラクタ（文字列、demilita）でファイルを開く  
+参照外しで文字列になるfile_iteratorを持つ  
 
 ## tags.hpp
 constexpr定文字列をいくつか  

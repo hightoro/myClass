@@ -4,8 +4,8 @@
  *|=====================================
  */
 
-#ifndef CLASS_T_DICT_H
-#define CLASS_T_DICT_H
+#ifndef HIGHTORO_CPP_ORIGINAL_DICT_CLASS_H
+#define HIGHTORO_CPP_ORIGINAL_DICT_CLASS_H
 
 #include <fstream>
 #include <string>
@@ -17,13 +17,13 @@
 template <typename T>
 class dict
 {
-protected:
+private:
   using key_type   = std::string;
   using value_type = T;
   using size_type  = std::size_t;
 
-  using k_list_t   = std::vector<std::string>;
-  using v_map_t    = std::map<std::string,T>;
+  using k_list_t   = std::vector<key_type>;
+  using v_map_t    = std::map<key_type,valur_type>;
 
   k_list_t    key_list_;  // key
   v_map_t     value_map_; // value
@@ -33,7 +33,7 @@ public:
    *|  Construct & Destruct  |*
    * ------------------------ */
   dict( )=default;
-  virtual ~dict( )=default;
+  ~dict( )=default;
 
   /* ------------------ *
    *|  Copy Construct  |*
@@ -62,7 +62,8 @@ public:
     iterator(const k_list_t::iterator& i,v_map_t& v):itr_(i),val_(v){}
     iterator(const iterator& i):itr_(i.itr_),val_(i.val_){}
 
-    value_type& operator*(){ return ( val_.at(*itr_) ); }
+    value_type& operator*(){  return (  val_.at(*itr_) ); }
+    value_type* operator->(){ return &( val_.at(*itr_) ); }
 
     iterator& operator++(){ ++itr_; return *this; }
     iterator  operator++(int){ iterator i(*this); ++(*this); return i; }
@@ -95,7 +96,8 @@ public:
     const_iterator( const k_list_t::const_iterator& i, const v_map_t& v ):itr_(i),val_(v){}
     const_iterator( const const_iterator& i ):itr_(i.itr_),val_(i.val_){}
 
-    const value_type& operator*()const{ return ( val_.at(*itr_) ); }
+    const value_type& operator*()const{ return (  val_.at(*itr_) ); }
+    value_type*const operator->()const{ return &( val_.at(*itr_) ); }
 
     const_iterator& operator++(){ ++itr_; return *this; }
     const_iterator  operator++(int){ const_iterator i(*this); ++(*this); return i; }
@@ -218,7 +220,7 @@ public:
     key_list_.push_back(name);
     value_map_.emplace(name,value);
   }
-  void push_back( const key_type& name, value_type&& value )
+  void push_back( key_type&& name, value_type&& value )
   {
     key_list_.push_back(name);
     value_map_.emplace(name,value);
