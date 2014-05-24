@@ -43,87 +43,126 @@ T& open( T& file, const std::string& name )
 /* --------------- *
  *|  file_string  |*
  * --------------- */
-template<template<typename...>class strT, typename charT=char, typename traits=std::char_traits<charT>,char del_='\n'>
-class file_string
+template<template<typename...>class strT, typename charT=char, typename traits=std::char_traits<charT> >
+class basic_file_reader
 {
 public:
-  using io_type = strT<charT,traits>;
-  using s_type  = std::basic_string<charT>;
+  using stream_t = strT<charT,traits>;
+  using string_t = std::basic_string<charT>;
 
 private:
-  s_type                 name_;  // file name
-  io_type                file_;  // file stream
-  s_type                 line_;  //
-  unsigned int           num_;   // line num;
-
-  //s_type                 del_;
-
+  string_t               name_;  // file name
+  stream_t               file_;  // file stream
+  string_t               line_;  //
 
 public:
   /*+----------------------------+*
    *|  Constructor & Destructor  |*
    *+----------------------------+*/
-  file_string()=delete;
-  ~file_string()=default;
+  basic_file_reader()=delete;
+  ~basic_file_reader()=default;
+
   /*+--------------------+*
    *|  Copy Constructor  |*
    *+--------------------+*/
-  file_string(const file_string&)=delete;
-  file_string& operator=(const file_string&)=delete;
+  basic_file_reader(const basic_file_reader&)=delete;
+  basic_file_reader& operator=(const basic_file_reader&)=delete;
+
   /*+--------------------+*
    *|  Move Constructor  |*
    *+--------------------+*/
-  file_string(file_string&&)=default;
-  file_string& operator=(file_string&&)=default;
+  basic_file_reader(basic_file_reader&&)=default;
+  basic_file_reader& operator=(basic_file_reader&&)=default;
+
   /*+---------------------+*
    *|  Other Constructor  |*
    *+---------------------+*/
-  file_string(const s_type& f):
-    name_(f),file_(),line_("(bof)"),num_(0)
-  { open(file_,f); /*get_line(file_,line_);*/  }
+  explicit basic_file_reader(const string_t& name):
+    name_(name),file_(),line_()
+  { open(file_,name); }
 
-  // get next line
-  const s_type& pop_line(){ getline_ew(); return line_; }
-  const s_type& pop_line(const s_type& s){ do{pop_line();}while(line_.find(s)==s_type::npos); return line_; }
-  unsigned int  get_num()const{ return num_; }
-  char          get_delim()const{ return del_; }
-  const s_type& get_line()const{ return line_; }
+  /* ------------- *
+   *| status |*
+   * ------------- */
+  enum struct status
+  {
+    bof,
+    good,
+    eof,
+    end
+  };
+
+  /* ------------- *
+   *| Iterators |*
+   * ------------- */
+  class iterator : public std::iterator<std::forward_iterator_tag, string_t const>
+  {
+  private:
+    stream_t&       file_;
+    const string_t& line_;
+    unsigned int    num_;
+    status          st_;
+
+  public:
+    iterator( )=delete;  // default constructor (delete)
+    ~iterator()=default; // destructor
+    iterator(const iterator&)=default;
+    iterator& operator=(const iterator&)=default;
+    //
+    iterator(const stream_t& file,const string_t& line):
+      file_(file),
+      line_(line),
+      num_(0),
+      st_(status::bof)
+      //{ std::getline(file_,line_); st_=(file_)?status::readable:status::eof; }
+    { forward(); }
+    //
+    iterator(const stream_t& file,const string_t& line,status st):
+      file_(file),
+      line_(line),
+      num_(0),
+      st_(st)
+      //{ std::getline(file_,line_); st_=(file_)?status::readable:status::eof; }
+    { }
+    //
+    void forward()
+    {
+      if( file_ ){
+        std::getline(file_,line_);
+        ++num_;
+        st_=(file_)?status::good:status::eof;
+      }
+      else if( st_==status::eof ){
+        st_=status::end;
+      }
+    }
+    //
+    const string_t& operator* ()const{ return  line_; }
+    string_t* const operator->()const{ return &line_; }
+    //
+    iterator& operator++(){ forward(); return *this; }
+    //iterator  operator++(int){ iterator i(*this); ++(*this); return i; }
+    iterator& operator++(int){ forward(); return *this; }
+    //
+    bool operator!=(const iterator& i)const{ return st_ != i.st_; }
+    bool operator==(const iterator& i)const{ return st_ == i.st_; }
+  };
+
+  iterator begin()
+  { return iterator(file_,line_); }
+
+  const iterator end()
+  { return iterator(file_,line_,status::end); }
+
+  // getter
+  const string_t& get_line()const{ return line_; }
 
   // stream strait
-  bool          eof()const{ return static_cast<bool>(file_.eof()); }
-
-  // move current line
-  const s_type& operator++(){ return pop_line(); }
-  const s_type  operator++(int){ s_type s=line_; pop_line(); return s; }
-
-  // show line
-  //template<typename charT,typename triats>
-  friend std::basic_ostream<charT,traits>& operator<<( std::basic_ostream<charT,traits>& ostr,const file_string& lhs)
-  {
-    std::basic_ostringstream<charT,traits> num;
-    num << "(" << lhs.num_ << ")";
-    std::basic_ostringstream<charT,traits> str;
-    str << std::setw(7) << std::right << num.str()
-        << "|" << lhs.line_;
-    return ostr << str.str();
-  }
-
-  // while space eliminate getline
-  bool getline_ew()
-  {
-    while( std::getline(file_,line_,del_) ){
-      num_++; // line_ctr increment
-      if( line_.length()<2 ) continue;
-      //if( line_.find(co)!=std::basic_string<charT>::npos ) continue;
-      return true;
-    }
-    line_="(eof)";
-    return false;
-  }
+  bool eof()const{ return static_cast<bool>(file_.eof()); }
 
 };
 
-using ifstring = file_string<std::basic_ifstream>;
+using file_reader = basic_file_reader<std::basic_ifstream>;
 
 }
 
