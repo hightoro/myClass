@@ -27,8 +27,15 @@ namespace pporig{
     CharT              str_;
     basic_regex<CharT> reg_;
   public:
+    regex_range()=default;
     regex_range(CharT const& t,basic_regex<CharT> const& r):str_(t),reg_(r){}
-    regex_range(CharT&& t,basic_regex<CharT>&& r):str_(t),reg_(r){}
+    regex_range(CharT&&      t,basic_regex<CharT>&&      r):str_(t),reg_(r){}
+    regex_range(regex_range const&)=default;
+    regex_range(regex_range &&)=default;
+    regex_range& operator=(regex_range const&)=default;
+    regex_range& operator=(regex_range &&)=default;
+    ~regex_range()=default;
+    //
     regex_iterator<BidirIt> begin(){return regex_iterator<BidirIt>(str_.begin(),str_.end(),reg_);}
     regex_iterator<BidirIt> end(){return regex_iterator<BidirIt>();}
   };

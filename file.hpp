@@ -41,7 +41,7 @@ T& open( T& file, const std::string& name )
 }
 
 /* --------------- *
- *|  file_string  |*
+ *|  file_reader  |*
  * --------------- */
 template<template<typename...>class strT, typename charT=char, typename traits=std::char_traits<charT> >
 class basic_file_reader
