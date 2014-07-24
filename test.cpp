@@ -9,6 +9,7 @@
 
 #include "dict.hpp"
 #include "coord.hpp"
+#include "file.hpp"
 
 struct TestClass
 {
@@ -17,7 +18,7 @@ struct TestClass
   const std::string& get_name()const{return name_;}
 };
 
-int main()
+auto main()-> decltype(int())
 {
   // dict.hpp //
   dict<TestClass> dict_a;
@@ -57,5 +58,18 @@ int main()
   constexpr auto coord_f = coord_d + coord(1,1,1,1,1);
   std::cout << coord_f << std::endl;
 
+  std::cout << "----- file.hpp ------" << std::endl;
+
+  // file.hpp //
+  ifstring ifs_a("coord.hpp");
+
+  std::cout << "----- TEST1 ------" << std::endl;
+  ifs_a.pop_line();
+  std::cout << tags::ERROR << ifs_a << std::endl;
+  std::cout << "----- TEST2 ------" << std::endl;
+  auto&& ifs_b = ifs_a;
+  ifs_b.pop_line();
+  std::cout << tags::WARN << ifs_b << std::endl;
+  while(ifs_b.pop_line(),!ifs_b.eof()){ /*ifs_b.pop_line();*/ std::cout << ifs_b << std::endl; }
 }
 

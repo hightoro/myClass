@@ -4,8 +4,8 @@
  *|=====================================
  */
 
-#ifndef CLASS_T_DICT_H
-#define CLASS_T_DICT_H
+#ifndef HIGHTORO_CPP_ORIGINAL_DICT_CLASS_H
+#define HIGHTORO_CPP_ORIGINAL_DICT_CLASS_H
 
 #include <fstream>
 #include <string>
@@ -17,24 +17,23 @@
 template <typename T>
 class dict
 {
-protected:
-
-  std::vector<std::string>   key_list_;  // key
-  std::map<std::string,T>    value_map_; // value
-
+private:
   using key_type   = std::string;
   using value_type = T;
   using size_type  = std::size_t;
 
-  using k_list_t   = std::vector<std::string>;
-  using v_map_t    = std::map<std::string,T>;
+  using k_list_t   = std::vector<key_type>;
+  using v_map_t    = std::map<key_type,valur_type>;
+
+  k_list_t    key_list_;  // key
+  v_map_t     value_map_; // value
 
 public:
   /* ------------------------ *
    *|  Construct & Destruct  |*
    * ------------------------ */
   dict( )=default;
-  virtual ~dict( )=default;
+  ~dict( )=default;
 
   /* ------------------ *
    *|  Copy Construct  |*
@@ -63,7 +62,8 @@ public:
     iterator(const k_list_t::iterator& i,v_map_t& v):itr_(i),val_(v){}
     iterator(const iterator& i):itr_(i.itr_),val_(i.val_){}
 
-    value_type& operator*(){ return ( val_.at(*itr_) ); }
+    value_type& operator*(){  return (  val_.at(*itr_) ); }
+    value_type* operator->(){ return &( val_.at(*itr_) ); }
 
     iterator& operator++(){ ++itr_; return *this; }
     iterator  operator++(int){ iterator i(*this); ++(*this); return i; }
@@ -75,14 +75,10 @@ public:
   };
 
   iterator begin( )
-  {
-    return iterator( key_list_.begin(),value_map_ );
-  }
+  { return iterator( key_list_.begin(),value_map_ ); }
 
   iterator end( )
-  {
-    return iterator( key_list_.end(),value_map_ );
-  }
+  { return iterator( key_list_.end(),value_map_ ); }
 
 
   /* ------------------ *
@@ -100,7 +96,8 @@ public:
     const_iterator( const k_list_t::const_iterator& i, const v_map_t& v ):itr_(i),val_(v){}
     const_iterator( const const_iterator& i ):itr_(i.itr_),val_(i.val_){}
 
-    const value_type& operator*()const{ return ( val_.at(*itr_) ); }
+    const value_type& operator*()const{ return (  val_.at(*itr_) ); }
+    value_type*const operator->()const{ return &( val_.at(*itr_) ); }
 
     const_iterator& operator++(){ ++itr_; return *this; }
     const_iterator  operator++(int){ const_iterator i(*this); ++(*this); return i; }
@@ -112,71 +109,52 @@ public:
   };
 
   const_iterator begin( )const
-  {
-    return const_iterator( key_list_.begin(),value_map_  );
-  }
+  { return const_iterator( key_list_.begin(),value_map_ ); }
+
   const_iterator end( )const
-  {
-    return const_iterator( key_list_.end(),value_map_  );
-  }
+  { return const_iterator( key_list_.end(),value_map_ ); }
 
   /* ------------------ *
    *|  Element access  |*
    * ------------------ */
   // front
   value_type& front( )
-  {
-    return value_map_.at(key_list_.front());
-  }
+  { return value_map_.at(key_list_.front()); }
+
   const value_type& front( ) const
-  {
-    return value_map_.at(key_list_.front());
-  }
+  { return value_map_.at(key_list_.front()); }
 
   // back
   value_type& back( )
-  {
-    return value_map_.at(key_list_.back());
-  }
+  { return value_map_.at(key_list_.back()); }
+
   const value_type& back( ) const
-  {
-    return value_map_.at(key_list_.back());
-  }
+  { return value_map_.at(key_list_.back()); }
 
   // at
   value_type& at( const key_type& key )
-  {
-    return value_map_.at(key);
-  }
+  { return value_map_.at(key); }
+
   const value_type& at( const key_type& key ) const
-  {
-    return value_map_.at(key);
-  }
+  { return value_map_.at(key); }
 
   // operator[]
   value_type& operator[]( const key_type& key )
-  {
-    return value_map_.at(key);
-  }
+  { return value_map_.at(key); }
+
   const value_type& operator[]( const key_type& key ) const
-  {
-    return value_map_.at(key);
-  }
+  { return value_map_.at(key); }
 
   /* ------------ *
    *|  Capacity  |*
    * ------------ */
   // empty
   bool empty( ) const noexcept
-  {
-    return key_list_.empty();
-  }
+  { return key_list_.empty(); }
 
   // size
   size_type size( ) const noexcept
-  {
-    return key_list_.size();
-  }
+  { return key_list_.size(); }
 
   /* ------------- *
    *|  Modifiers  |*
@@ -192,9 +170,27 @@ public:
 
 
 
-  // emplace
+  // emplace_front
 
 
+
+  // emplace_back
+  template<typename... Args>
+  auto emplace_back( key_type&& name,Args&&... args ) -> decltype
+    ( typename std::enable_if< std::is_constructible<T,key_type,Args...>::value,void>::type() )
+  {
+    key_list_.push_back(name);
+    auto sname = name;
+    value_map_.emplace( name,sname,args... );
+  }
+
+  template<typename... Args>
+  auto emplace_back( key_type&& name,Args&&... args ) -> decltype
+    ( typename std::enable_if<!std::is_constructible<T,key_type,Args...>::value,void>::type() )
+  {
+    key_list_.push_back(name);
+    value_map_.emplace( name,args... );
+  }
 
   // push_front
   //void push_front( const string& )
@@ -205,7 +201,8 @@ public:
   auto push_back( const key_type& name ) -> decltype
     ( typename std::enable_if< std::is_constructible<T,std::string>::value,U>::type(),
       void()
-      ){
+      )
+  {
     key_list_.push_back(name);
     value_map_.emplace( name,T(name) );
   }
@@ -213,7 +210,8 @@ public:
   auto push_back( const key_type& name ) -> decltype
     ( typename std::enable_if<!std::is_constructible<T,std::string>::value,U>::type(),
       void()
-      ){
+      )
+  {
     key_list_.push_back(name);
     value_map_.emplace( name,T() );
   }
@@ -222,26 +220,11 @@ public:
     key_list_.push_back(name);
     value_map_.emplace(name,value);
   }
-  void push_back( const key_type& name, value_type&& value )
+  void push_back( key_type&& name, value_type&& value )
   {
     key_list_.push_back(name);
     value_map_.emplace(name,value);
   }
-
-  // emplace_front
-
-
-
-  // emplace_back
-  /*
-  template <class... Args>
-  void emplace_back( const Args&... args )
-  {
-    T value( args... );
-    key_list.push_back( key );
-    value_map.emplace( key,args... );
-  }
-  */
 
   // erase
   void erase( const key_type& name )
@@ -265,26 +248,18 @@ public:
    * ------------ */
   // exist
   bool exist( const key_type& key )const
-  {
-    return ( value_map_.find(key)!=value_map_.end() );
-  }
+  { return ( value_map_.find(key)!=value_map_.end() ); }
 
   // count
   size_type count( const key_type& key )const
-  {
-    return value_map_.count();
-  }
+  { return value_map_.count(); }
 
   // find
-  iterator find( const key_type& key )
-  {
-    return iterator( std::find(key_list_.begin(),key_list_.end(),key),value_map_ );
-  }
+  //iterator find( const key_type& key )
+  //{ return iterator( std::find(key_list_.begin(),key_list_.end(),key),value_map_ ); }
 
-  const_iterator find( const key_type& key )const
-  {
-    return const_iterator( std::find(key_list_.begin(),key_list_.end(),key),value_map_ );
-  }
+  //const_iterator find( const key_type& key )const
+  //{ return const_iterator( std::find(key_list_.begin(),key_list_.end(),key),value_map_ ); }
 
 };
 
