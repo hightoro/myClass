@@ -186,21 +186,6 @@ public:
 
 };
 
-
-/* -------------------- *
- *|  operator(global)  |*
- * -------------------- */
-template<int N>
-using coord =basic_coord<int,N>;
-template<int N>
-using fcoord=basic_coord<float,N>;
-template<int N>
-using dcoord=basic_coord<double,N>;
-template<int N>
-using scoord=basic_coord<short,N>;
-template<int N>
-using lcoord=basic_coord<long,N>;
-
 //
 template <typename T>
 class basic_coord<T,3>
@@ -216,6 +201,21 @@ public:
   T const& z;  // read-only menber
 
 };
+
+
+/* -------------------- *
+ *|  operator(global)  |*
+ * -------------------- */
+template<int N>
+using coord =basic_coord<int,N>;
+template<int N>
+using fcoord=basic_coord<float,N>;
+template<int N>
+using dcoord=basic_coord<double,N>;
+template<int N>
+using scoord=basic_coord<short,N>;
+template<int N>
+using lcoord=basic_coord<long,N>;
 
 }
 

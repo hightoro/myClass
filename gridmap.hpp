@@ -68,9 +68,9 @@ public:
   void insert(int x,int y,T&& val)
   { val_map_.insert({ {x,y},val }); }
 
-  /* ---------- *
+  /* --------- *
    *|  erase  |*
-   * ---------- */
+   * --------- */
   void erase(int x,int y)
   { val_map_.erase({x,y}); }
 
@@ -79,7 +79,15 @@ public:
    * --------- */
   bool exist(int x,int y)
   { return (val_map_.count({x,y})!=0); }
-
-
+  bool exist(int x1,int y1,int x2,int y2)
+  {
+    bool flag=false;
+    for(int x=x1;x<x2;x++){
+      for(int y=y1;y<y2;y++){
+        flag &= val_map_.exist({x,y});
+      }
+    }
+    return flag;
+  }
 
 };
