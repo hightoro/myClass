@@ -16,8 +16,8 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive.hpp>
-
-namespace pporig
+n
+amespace pporig
 {
   //////////////////////////////////////////////////////////////////////////////////
   // stream
