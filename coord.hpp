@@ -23,6 +23,7 @@
 
 namespace pporig{
 
+//
 template <typename T,int N>
 class basic_coord
 {
@@ -51,6 +52,9 @@ public:
   explicit constexpr basic_coord(T nx,T ny):
     x_(nx),y_(ny),x(x_),y(y_){}
 
+  explicit constexpr basic_coord(std::pair<T,T> n):
+    x_(n.first),y_(n.second),x(x_),y(y_){}
+
   /* ------------------ *
    *|  Copy Construct  |*
    * ------------------ */
@@ -66,78 +70,50 @@ public:
   /* ---------------------- *
    *|  operator(compound)  |*
    * ---------------------- */
+  // append
   /*constexpr*/ basic_coord& operator+= ( const basic_coord& obj )
-  {
-    x_+= obj.x_;
-    y_+= obj.y_;
-    return *this;
-  }
+  { x_+= obj.x_; y_+= obj.y_; return *this; }
+
+  // subtract
   /*constexpr*/ basic_coord& operator-= ( const basic_coord& obj )
-  {
-    x_-= obj.x_;
-    y_-= obj.y_;
-    return *this;
-  }
+  { x_-= obj.x_; y_-= obj.y_; return *this; }
+
+  // multiply
   //basic_coord<T>& operator *= ( const basic_coord<T>& );
   /*constexpr*/ basic_coord& operator*= ( const T& val )
-  {
-    x_*= val;
-    y_*= val;
-    return *this;
-  }
+  { x_*= val; y_*= val; return *this; }
+
+  // divide
   //basic_coord<T>& operator /= ( const basic_coord<T>& );
   /*constexpr*/ basic_coord& operator/= ( const T& val)
-  {
-    x_/= val;
-    y_/= val;
-    return *this;
-  }
+  { x_/= val; y_/= val; return *this; }
+  //basic_coord<T>& operator %= ( const basic_coord<T>& );
   /*constexpr*/ basic_coord& operator%= ( const T& val)
-  {
-    x_&= val;
-    y_&= val;
-    return *this;
-  }
+  { x_&= val; y_&= val; return *this; }
 
   /* -------------------- *
    *|  operator(binary)  |*
    * -------------------- */
   // append
   friend constexpr basic_coord operator+ (const basic_coord& lhs, const basic_coord& rhs)
-  { return std::move(lhs += rhs); }
-  friend constexpr basic_coord operator+ (basic_coord&& lhs, const basic_coord& rhs)
-  { return std::move(lhs += rhs); }
-  friend constexpr basic_coord operator+ (const basic_coord& lhs, basic_coord&& rhs)
-  { return std::move(lhs += rhs); }
-  friend constexpr basic_coord operator+ (basic_coord&& lhs, basic_coord&& rhs)
-  { return std::move(lhs += rhs); }
-  //
+  { basic_coord r = lhs;  r += rhs; return r; }
+
+  // subtract
   friend constexpr basic_coord operator- (const basic_coord& lhs, const basic_coord& rhs)
-  { return std::move(lhs -= rhs); }
-  friend constexpr basic_coord operator- (basic_coord&& lhs, const basic_coord& rhs)
-  { return std::move(lhs -= rhs); }
-  friend constexpr basic_coord operator- (const basic_coord& lhs, basic_coord&& rhs)
-  { return std::move(lhs -= rhs); }
-  friend constexpr basic_coord operator- (basic_coord&& lhs, basic_coord&& rhs)
-  { return std::move(lhs -= rhs); }
-  //
+  { basic_coord r = lhs;  r -= rhs; return r; }
+
+  // multiply
   friend constexpr basic_coord operator* (const basic_coord& lhs, T rhs)
-  { return std::move(lhs *= rhs); }
-  friend constexpr basic_coord operator* (basic_coord&& lhs, const T& rhs)
-  { return std::move(lhs *= rhs); }
-  friend constexpr basic_coord operator* (T rhs, const basic_coord& lhs)
-  { return std::move(lhs *= rhs); }
-  friend constexpr basic_coord operator* (T rhs, basic_coord&& lhs)
-  { return std::move(lhs *= rhs); }
-  //
+  { basic_coord r = lhs;  r *= rhs; return r; }
+  friend constexpr basic_coord operator* (T lhs, const basic_coord& rhs)
+  { basic_coord r = rhs;  r *= lhs; return r; }
+
+  // divide
   friend constexpr basic_coord operator/ (const basic_coord& lhs, T rhs)
-  { return std::move(lhs /= rhs); }
-  friend constexpr basic_coord operator/ (basic_coord&& lhs, T rhs)
-  { return std::move(lhs /= rhs); }
+  { basic_coord r = lhs;  r /= rhs; return r; }
   friend constexpr basic_coord operator% (const basic_coord& lhs, T rhs)
-  { return std::move(lhs %= rhs); }
-  friend constexpr basic_coord operator% (basic_coord&& lhs, T rhs)
-  { return std::move(lhs %= rhs); }
+  { basic_coord r = lhs;  r %= rhs; return r; }
+
 
   /* ------------------- *
    *|  operator(unary)  |*
