@@ -23,13 +23,13 @@
 
 namespace pporig{
 
-//
+// 
 template <typename T,int N>
 class basic_coord
-{
+{};
 
-};
-
+//
+// specialize N=2
 //
 template <typename T>
 class basic_coord<T,2>
@@ -195,4 +195,4 @@ using lcoord=basic_coord<long,N>;
 
 }
 
-#endif //CLASS_T_COORD_H
+#endif //CLASS_T_COORD_
